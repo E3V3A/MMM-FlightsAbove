@@ -1,0 +1,59 @@
+/* 
+ * ---------------------------------------------------------
+   Module:  MMM-FlightsAbove 
+   File:    MMM-FlightsAbove.css
+   Author:  E:V:A
+   URL:     https://github.com/E3V3A/MMM-FlightsAbove/
+ * ---------------------------------------------------------
+*/
+
+.body {
+  background-color:#FFF;
+}
+
+/* Theme the Tabulator element */
+#flightsabove {
+  /* The (max) table height is hardcoded in MMM-Table.js */
+  width: 100%;               /* 600px */ 
+  font-family: sans-serif;
+  font-size: 12px;           /* remove? */
+  background-color: #000;
+  border: none;              /*border: 1px solid #333;*/
+  /*border-radius: 10px;*/
+}
+
+#flightsabove .tabulator {
+    background-color: #000;
+}
+
+/* Theme the table Header */
+#flightsabove .tabulator-header {
+    background-color: #000;  /* 333 */
+    color: #ff0;             /* yellow */
+    font-weight: 100;
+}
+
+/* The Header & Row (right) Boders   */
+#flightsabove .tabulator-header .tabulator-col {
+    border-right: none; /* 1px solid #aaa */
+}
+.tabulator .tabulator-row .tabulator-cell {
+    border-right: none; /* 1px solid #888; */
+}
+
+/* Color the table rows */ 
+#flightsabove .tabulator-tableHolder .tabulator-table .tabulator-row {
+    font-color:#fff;
+    background-color: #333; /* 666 */ 
+    border-right: none;     /* remove? */
+}
+
+/* Color even rows */
+#flightsabove .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+    background-color: #222;  /* 444 */ 
+}
+
+/* Remove the sort arrows in table headers */
+.tabulator .tabulator-header .tabulator-col[data-sortable=true] .tabulator-col-title {width: 100%;}
+.tabulator-arrow {display: none;}
+

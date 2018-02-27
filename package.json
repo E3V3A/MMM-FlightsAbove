@@ -1,0 +1,31 @@
+{
+  "name": "MMM-FlightsAbove",
+  "version": "0.0.1",
+  "description": "The 'MMM-FlightsAbove' module displays what is flying in the airspace above your head from data provided by flightradar24.com",
+  "main": "MMM-FlightsAbove.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/E3V3A/MMM-FlightsAbove.git"
+  },
+  "keywords": [
+    "magic mirror",
+    "module",
+    "flights",
+    "IATA/ICAO",
+    "airspace"
+  ],
+  "author": "E:V:A",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com//E3V3A/MMM-FlightsAbove/issues"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "jquery-ui-dist": "^1.12.1",
+    "jquery.tabulator": "^3.4.4"
+  }
+}
