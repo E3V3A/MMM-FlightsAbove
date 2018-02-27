@@ -47,8 +47,9 @@ The specific flight data items available for display are:
 Module Screenshot:
 
 ![Full](./images/FlightsAbove1.png)
+(From the [MMM-Tabulator](https://github.com/E3V3A/MMM-Tabulator) Demo.)
 
-The `MagicRadarBB.html` Boundary Box Calculator Screenshot:
+The `MagicRadarBB.html` *Boundary Box Calculator* Screenshot:
 
 ![Full](./images/MagicRadarBB.png)
 
@@ -234,7 +235,7 @@ The main part to configure is found under the `loadTabulator()` function:
 
 ```
 
-For further details about configuring the many Tabulator options, see [MMM-Tabulator](https://github.com/E3V3A/MMM-Tabulator) and references therein.
+For further details about configuring the many Tabulator options, see [MMM-Tabulator](https://github.com/E3V3A/MMM-FlightsAbove/issues) and references therein.
 
 
 ---
