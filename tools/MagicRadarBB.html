@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+   <meta http-equiv="content-type" content="text/html; charset=UTF-8"/> 
+   <title>Radar Boundary Box Calculator</title>
+    <meta name="description"
+          content="Calculate the FR24/GMaps BoundaryBox of a Radar circle using Google Maps APIv3" />
+    <meta name="author" content="E:V:A">
+
+    <style>
+      #p1 { color: Gray; }
+      #p2 { background-color: LightYellow; }
+      #status { color: OrangeRed; } 
+      #map { 
+         width: 800px; 
+         height: 600px;
+      }
+      /*html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }*/
+    </style>
+
+   <!-- ADD YOUR OWN GOOGLE MAPS API KEY HERE! -->
+   <!-- See: https://developers.google.com/maps/documentation/javascript/get-api-key -->
+   <script  type="text/javascript" 
+            src="http://maps.google.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+</head>
+
+<!-- 
+   ==========================================================================
+   Using Chris Veness website and code to calculate a bounding box using 
+   the "direct problem" and Sphercial Earth assumption.
+   See: http://www.movable-type.co.uk/scripts/latlong.html
+   ==========================================================================
+--> 
+
+<body>
+   
+   <div id="map"></div> 
+
+   <p>&nbsp;Instructions: Drag the center marker to a new location (or enter Lat/Lon manually) and click "Compute".</p>
+   <p>&nbsp;Circle Center: 
+      <input type="text" id="cc" size=30>&nbsp; R:
+      <input type="text" id="cr" size=6> km &nbsp;
+      <input type="button" value="Compute" onclick="compute()" />
+      <input type="button" value="Reset" onclick="reset()" />
+   </p>
+   <p>&nbsp;The result shown below is a list of minimum to maximum Lat or Lon values
+      for the circle's bounding box with sides: </br>
+      &nbsp;(North, West, South, East) = (MaxLat, MinLon, MinLat, MaxLon).</p>
+   <p>&nbsp;NW-SE:   <input type="text" "readonly" id="p2" size=60> (FR24 BB)</p>
+   <p>&nbsp;SW-NE:   <input type="text" "readonly" id="p1" size=60> (GMaps BB)</p>
+   <p>&nbsp;&nbsp;status:  <input type="text" "readonly" id="status" size=40></p>
+
+   <!-- 
+   ==========================================================================
+                     vvv  HTML Continued Below!  vvv
+   ==========================================================================                  
+   ToDo:  
+      [ ] Add to and Clean up function calls
+      [ ] Fix error handling
+      [ ] Check for Google Maps API key and give Error message
+   ==========================================================================
+   --> 
+
+   <script type="text/javascript">
+
+      Number.prototype.toRad = function() { return this * Math.PI / 180; }
+      Number.prototype.toDeg = function() { return this * 180 / Math.PI; }
+
+      // Truncate Lat/Lon and Bounds to 5 decimal places to be within 1 meter.
+      // See:  https://en.wikipedia.org/wiki/Decimal_degrees
+      function degTrunc(degstr){
+               if (isNaN(degstr)) return null;
+               return degstr.parseFloat().toFixed(5);
+      }
+
+      // Removes all "()[space]" from strings of lat/lon positions
+      function coClean(degstr){ 
+               return degstr.toString().replace(/[\(\)\ ]/g, "");
+      }
+
+      // Truncate a (lat,lng) string to 5 decimal places
+      function ccTrunc(pp) {     // pp: (lat,lng) string
+               var t = pp.split(",");
+               t[0] = parseFloat(t[0]).toFixed(5);
+               t[1] = parseFloat(t[1]).toFixed(5);
+               //console.log("t[0] (lat): ", t[0]);
+               //console.log("t[1] (lng): ", t[1]);
+               return t;
+      }
+
+      function bbTrunc(bbox) {
+               var t = bbox.slice();
+               var bl = bbox.length;
+               for (var i=0; i<bl; i++) {
+                     t[i] = parseFloat(t[i]).toFixed(5);
+                     //console.log("  t[" + i + "]: ", t[i]);
+               }
+               return t;
+      }
+
+      // Remap the Bounding Box corner limits ("bounds") from SW-NE to NW-SE.
+      // Because Flighradar (and others) API are using NW and SE corners,
+      // we swap the indexes from 0123 to 2103. 
+      // We also truncate the lat/lon to 5 decimals.
+      //Number.prototype.reMapBB = function() { ... }
+      function swap(bbox) {
+              var t = bbox.slice();
+              t[0] = bbox[2];
+              t[2] = bbox[0];
+              for (var i=0; i<=3; i++) {
+                      t[i] = parseFloat(t[i]).toFixed(5);
+                      //console.log("  t[" + i + "]: ", t[i]);
+              }
+              return t;
+      }
+
+      function debugLog(pp) {
+            let pointA = pp;
+            console.log("pointA         : ", pointA);                      // object (of lat/lng) ?
+            console.log("pointA obj.keys: ", Object.keys(pointA));         // array (of names)?
+            console.log("pointA clean   : ", coClean(pointA));             // string
+            console.log("pointA Trunc   : ", ccTrunc(coClean(pointA)));    // string
+            
+            console.log("\nLet's look at the objects:")
+            // Get list of all elements in a JavaScript array
+            Object.keys(pointA).forEach(function(key) {
+               console.log(key, pointA[key]);
+            });
+      }
+
+      // From: https://raw.githubusercontent.com/chrisveness/geodesy/v1.1.2/latlon-spherical.js
+      google.maps.LatLng.prototype.destinationPoint = function(brng, dist) {
+         dist = dist / 6371;  // Mean Earth Radius // Radius [WGS84]: R_eq=6378.137 R_pol=6356.7523142
+         brng = brng.toRad();  
+
+         var lat1 = this.lat().toRad(), lon1 = this.lng().toRad();
+         var lat2 = Math.asin(Math.sin(lat1) * Math.cos(dist) + 
+                              Math.cos(lat1) * Math.sin(dist) * Math.cos(brng));
+         var lon2 = lon1 + Math.atan2(Math.sin(brng) * Math.sin(dist) * Math.cos(lat1), 
+                                      Math.cos(dist) - Math.sin(lat1) * Math.sin(lat2));
+
+         if (isNaN(lat2) || isNaN(lon2)) return null;
+         return new google.maps.LatLng(lat2.toDeg(), (lon2.toDeg() + 540) % 360 - 180); // Normalise Lon to: [−180,+180]°
+      }
+
+      //------------------------------------------------------------------------
+      // Main
+      //------------------------------------------------------------------------
+
+      function reset() {
+         //setMapOnAll(null);   // hide all markers
+         //markers = [];        // delete all markers
+         initialize();
+         compute();
+      }
+
+      function initialize() {
+               // Define the Circle Center Lat/Lon: 
+               // for Bali airport IATA: "DPS" at: -8.74816,115.167099
+               var CC = "-8.74816,115.167099";  // "DPS"
+               var radius = 60;                 // Radius in [km]
+               document.getElementById('cc').value = CC;
+               document.getElementById('cr').value = radius;
+      }
+
+      function compute() {
+
+         var result = {};  // Error log to "status" field
+
+         try {
+            CC = document.getElementById('cc').value;
+            radius = document.getElementById('cr').value;
+            var carr = CC.split(",");              //var carr = {lat: -34, lng: 151};
+
+            console.log("Computing new BB for CC @ [Lat,Lng]: " + carr.toString() );
+            var pointA = new google.maps.LatLng(carr[0],carr[1]);
+
+            var mapOpt = { 
+               mapTypeId: google.maps.MapTypeId.TERRAIN,
+               center: pointA,
+               scrollwheel: false,
+               streetViewControl: false,
+               zoom: 8           // The Map Zoom Level
+               // To enable Night Mode, uncomment the following, or
+               // put it in a separete file:  radarmap-styles.json
+               // See:  https://stackoverflow.com/questions/41302588/google-map-api-v3-move-map-style-in-a-separate-file
+               //       https://mapstyle.withgoogle.com/
+               //,styles: ...
+            };
+
+            var map = new google.maps.Map(document.getElementById("map"), mapOpt);
+
+            // The BoundingBox Limits are defined by 2 corner points: SW and NE
+            // whereas Flightradar24 API are using NW and SE coners!
+            //# radar(LatMax/North, LonMin/West, LatMin/South, LonMax/East)
+            var bounds = null;
+            /*var bounds = {
+                  north: 35.0,   // pointA.destinationPoint(0, radius),          // N: 35.0 (lat)
+                  south: 33.0,   // pointA.destinationPoint(180, radius),        // S: 33.0 (lat)
+                  east:  16.1,   // pointA.destinationPoint(270, radius),        // E: 16.1 (lon)
+                  west:  15.1    // pointA.destinationPoint(90, radius)          // W: 15.1 (lon)
+            };*/
+            
+            // Define the 2 points: [CircleCenter, PointR] 
+            var CtoR = [
+               pointA, 
+               pointA.destinationPoint(55, radius) // We chose an arbitrary bearing of 55 deg to put R marker
+            ];
+            
+            // Add/Chose an arrow head for the end of the Cirlce Radius
+            var lineSymbol = { path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW };
+
+            // Draw the Radar Circle (and name it to use for bounds)
+            circle = new google.maps.Circle({
+               strokeColor: '#FF0000',
+               strokeOpacity: 0.8,
+               strokeWeight: 2,
+               fillColor: '#FF0000',
+               fillOpacity: 0.2,         
+               center: pointA,            // C = P0 
+               radius: radius * 1000,     // Convert to meters
+               map: map
+            });
+            
+            bounds = circle.getBounds();  // APIv3
+
+            // Draw the Flighradar24 BoundingBox
+            new google.maps.Rectangle({
+               strokeColor: '#0000FF',
+               strokeOpacity: 0.8,
+               strokeWeight: 2,
+               fillColor: '#00FF00',
+               fillOpacity: 0.1,
+               bounds: bounds,
+               //title: 'Flightradar24 Bounding Box',
+               map: map
+            });
+
+            // Show marker at circle center
+            //new google.maps.Marker({
+            myCC = new google.maps.Marker({
+               position: pointA,
+               draggable: true,         // to allow moving it around
+               title: 'Radar Center',
+               map: map
+            });
+
+            // Show marker at destination point
+            new google.maps.Marker({
+               position: CtoR[1],
+               title: 'Radar Radius [km]',
+               map: map
+            });
+
+            // Draw line between P0 and PR
+            new google.maps.Polyline({
+               path: CtoR,
+               icons: [{
+                  icon: lineSymbol,
+                  offset: '100%'
+               }],
+               geodesic: false,        // No curved lines on map, it's just confusing
+               strokeColor: '#000000',
+               strokeOpacity: 1.0,
+               strokeWeight: 2,
+               //title: 'Radar Radius [km]',
+               map: map
+            });
+
+            // ToDo: put this into functions
+            bounds = coClean(bounds); //bounds.toString().replace(/[\(\)\ ]/g, "");
+            var barr = bounds.split(",");
+
+            document.getElementById('cc').value = CC;             //coClean(pointA); //.toString().replace(/[\(\)\ ]/g, "");
+            document.getElementById('cr').value = radius;
+            document.getElementById('p1').value = bbTrunc(barr);  // bounds // Gmaps BB
+            document.getElementById('p2').value = swap(barr);     // F24 BB
+
+            console.log("GMaps Rectangle boundary box:")
+            console.log(bbTrunc(barr).toString());                // string
+
+            //debugLog(pointA);
+
+            google.maps.event.addListener(map, 'click', function() {  // mouseover
+               alert("Circle Radius is "+ radius + " km.\nRectangle Bounding Box:\n" + swap(barr)); // bounds );
+               console.log("Circle Radius: " + radius + " km");
+               console.log("SW-NE BBox is: " + bbTrunc(barr) );
+               console.log("NW-SE BBox is: " + swap(barr) );
+            });
+
+            // https://stackoverflow.com/questions/5290336/getting-lat-lng-from-google-marker
+            google.maps.event.addListener(myCC, 'dragend', function(evt){
+               let newcc = evt.latLng.lat().toFixed(5) + "," + evt.latLng.lng().toFixed(5);
+               console.log("Dragged circle center to new location (Lat,Lng): " + newcc );
+               document.getElementById('cc').value = newcc;
+               map.setCenter(myCC.position);
+               myCC.setMap(map);
+            });
+
+            result.status = "OK";
+            //document.getElementById('status').value = "ok";
+         } 
+         catch (e) {
+            result.status = "ERROR: " + e.message;
+         }
+         document.getElementById('status').value = result.status;
+         //return result;
+   };
+
+   initialize();
+   compute();
+
+   </script> 
+   <!-- 
+   ==========================================================================
+                     vvv  HTML Continued Below!  vvv
+   ==========================================================================                  
+   --> 
+   
+</body> 
+</html>

@@ -3,8 +3,8 @@
  * FileName:     node_helper.js
  * Author:       E:V:A
  * License:      MIT
- * Date:         2018-02-27
- * Version:      0.0.1
+ * Date:         2018-02-28
+ * Version:      1.0.0
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -36,18 +36,17 @@
 
 const NodeHelper = require("node_helper");
 const fs = require('fs');
-//const async = require('async');
-const radar = require('flightradar24-client/lib/radar'); // This API return improper JSON
+const radar = require('flightradar24-client/lib/radar'); // Returns an Array of JS objects, not JSON!
 
 module.exports = NodeHelper.create({
 
     start: function() {
-        console.log("------------------------------------------------------------");
+        //console.log("------------------------------------------------------------");
         console.log(this.name + " started");
-        console.log("------------------------------------------------------------");
+        //console.log("------------------------------------------------------------");
         this.config = null;
         // get radar CONFIG here?
-        //this.sendSocketNotification("REQUEST_CONFIG");
+        //this.sendSocketNotification("REQUEST_RADAR_CONFIG");
     },
 
     stop: function() {
@@ -56,62 +55,25 @@ module.exports = NodeHelper.create({
     },
 
     radarPing: function() {
-        console.log("ENTER (inside)");
-        Promise.all([
-            //radar(-8.20917,114.62177,-9.28715,115.71243)  // "PDS" (Bali Airport)
-            radar(53.05959,12.52388,51.98161,14.29552) // (Berlin)
-            ]).then(function(results) {
-                var ping = JSON.stringify(results);
-
-                console.log("Sending NEW_DATA:");
-                console.log(ping);
-
-                // WTF! This below is never shown!
-                this.sendSocketNotification("NEW_DATA", ping); //self?
-                console.log("Sent NEW_DATA!");
-                console.log("NEW_DATA is: %O", ping);
-                console.dir(ping, {depth: null, colors: true});
-
-                //return ping;
-            }).then(function(error) {
-                //console.log("ERROR:")
+            // EDIT THE NEXT LINE WITH YOUR OWN BOUNDARY BOX
+            //radar(-8.20917,114.62177,-9.28715,115.71243)  // "DPS" (Bali Airport)
+            radar(53.05959,12.52388,51.98161,14.29552)      // (Berlin)
+            .then((flights) => {
+                this.sendSocketNotification("NEW_RADAR_DATA", flights);
+                //console.log("Sending NEW_RADAR_DATA:");
+                //console.log(flights);
+            })
+            .catch(function(error) {
                 console.log(error);
             });
-        console.log("EXIT (inside)");
     },
 
-/*    readData: function() {
-        var radarData = "";
-        radarData = this.radarPing();
-        console.log("The DATA:\n", radarData);
-
-        //if ( radarData === "" ) {
-        //}
-        //let cleanData = jZen(data);
-        //let cleanData = jZen(radarData);
-        let cleanData = radarData;
-        if (isJSON(cleanData) ) {
-            this.sendSocketNotification("NEW_DATA", cleanData);
-        } else {
-            // So WTF is it?
-            console.log("- JSON: false");
-            console.log("- isAO(dirty): " + isAO(radarData));
-            console.log("- isAO(clean): " + isAO(cleanData));
-            console.log("- Data:\n", radarData);
-        }
-    },
-*/
     socketNotificationReceived: function (notification, payload) {
-        //if (notification === "RADAR_CONFIG") {
-            //this.config = payload;
-        //} else
-        if (notification === "REQUEST_DATA") {
-            console.log("Received REQUEST_DATA!");
+        if (notification === "START_RADAR") {
+            //console.log("Received START_RADAR");
             this.config = payload;
-            //this.readData();
             this.radarPing();
             setInterval(() => {
-                //this.readData();
                 this.radarPing();
             }, this.config.updateInterval);
         }

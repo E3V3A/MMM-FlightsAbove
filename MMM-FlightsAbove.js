@@ -3,8 +3,8 @@
  * FileName:     MMM-FlightsAbove.js
  * Author:       E:V:A
  * License:      MIT
- * Date:         2018-02-27
- * Version:      0.0.1
+ * Date:         2018-02-28
+ * Version:      1.0.0
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -23,41 +23,21 @@
  * --------------------------------------------------------------------------
  */
 
-// WIP !
-/*
-   ==========================================================================
-    Flight  CallSig  From  To   Speed Bearing  Alt[m]
-    -------------------------------------------------
-    SN2588  BEL88T   TXL   BRU  246   262      14815
-
-    # We want the following config attributes:
-    // The following items are used to calculate the radar area
-    // bounding box from which airplanes will be reported.
-    location: "54,21"   // Lat/Lon of radar location
-    losradius: 100,     // Line of Sight radius in [km] of planes to be shown
-    speedunit: "kmh"    // kmh | kn (default)
-    altunit:   "m"      //   m | ft (default)
-    fontsize:  "small"  // [small,medium,large]
-    updates: 200,       // Update frequency in seconds
-    itemlist: [flight,callsig,to,from,alt,bearing,speed] // also: [id,registration,model,modes, radar]
-   ==========================================================================
-*/
-
 'use strict'
 
 Module.register('MMM-FlightsAbove',{
 
     defaults: {
-        header: "Flights Above",        // The module header text, if any. (Use: "" to remove.)
-//        headingIndicator: "decimal",    // ["decimal", "compass"] Type of heading indicator (I.e. "45" vs "NE")
-        updateInterval: 10000,          // [ms] 3*60*1000 // Radar scan/ping/update period [default 3 min]
-//        maxItems: 10,                   // MAX Number of planes to display [default is 10]
+//        header: "Flights Above",          // The module header text, if any. (Use: "" to remove.)
+//        headingIndicator: "decimal",      // ["decimal", "compass"] Type of heading indicator (I.e. "45" vs "NE")
+//        maxItems: 10,                     // MAX Number of planes to display [default is 10]
         // The geographical (map) Boundary-Box (BB), from within planes will be shown are given by:
         // the maximim Lat/Lon edges of: [N-lat, W-lon, S-lat, E-lon] - all in decimal degrees.
 //        radarBBox: "-8.20917,114.62177,-9.28715,115.71243", // "DPS" (Bali Airport)
-//        radarLocation: "23.2,54.2",     // [Lat,Lon] - The location of radar center in decimal degrees
-//        radarRadius: 60,                // [km] - The maximum distance of planes shown.
-//        watchList: "",                   // Highlight planes/flights/types on watch list
+//        radarLocation: "23.2,54.2",       // [Lat,Lon] - The location of radar center in decimal degrees
+//        radarRadius: 60,                  // [km] - The maximum distance of planes shown.
+//        watchList: "",                    // Highlight planes/flights/types on watch list
+        updateInterval: 60000               // [ms] 3*60*1000 // Radar scan/ping/update period [default 3 min]
     },
 
     requiresVersion: "2.1.0",
@@ -66,7 +46,7 @@ Module.register('MMM-FlightsAbove',{
         this.loaded = false;
         // This should be CONFIG!
         //this.sendSocketNotification("CONFIG", this.config);
-        this.sendSocketNotification("REQUEST_DATA", this.config);
+        this.sendSocketNotification("START_RADAR", this.config);
     },
 
     getDom: function() {
@@ -106,7 +86,9 @@ Module.register('MMM-FlightsAbove',{
         ];
     },
 
-    getTranslations: function() { return false; }, // Nothing to translate
+    getTranslations: function() {
+        return false;   // Nothing to translate
+    },
 
     // This come from the MM CORE or from other modules
     notificationReceived: function (notification, payload, sender) {
@@ -118,20 +100,16 @@ Module.register('MMM-FlightsAbove',{
 
     // This comes from YOUR module, usually "node_helper.js"
     socketNotificationReceived: function(notification, payload) {
-        console.log("=====> " + this.name + " received a socket notification: " + notification); //+ " - Payload: " + payload);
         switch (notification) {
-            case "NEW_DATA":
-                console.log("-----> FlightsAbove: NEW_DATA received!"); // Why doesn't this show?
-                let ping = payload;
-                console.log("-- PING!\n");
-                console.log(ping);
-                //console.log("-- PING DATA:\n", ping);
-
+            case "NEW_RADAR_DATA":
                 this.loaded = true;
                 this.setTableData(payload);
+                //console.error("NEW_RADAR_DATA Received");
+                //console.error(payload);
                 break;
             default:
-                console.log("Did not match the Notification: ", notification);
+                console.error("Unmatched Notification: ", notification);
+                //Log.error("Unmatched Notification: ", notification);
         }
     },
 

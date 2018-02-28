@@ -1,18 +1,19 @@
 ## MagicMirror Module: FlightsAbove
 
-**`STATUS:`** This is work in progress and **currently NOT working** as expected. (Help Needed!) 
-
-**Problem:**  JSON Data doesn't seem to be received by Module...
+| STATUS: | Version | Date | Maintained? |
+|:------- |:------- |:---- |:----------- |
+| Working | `1.0.1` | 2018-02-28 | YES |
 
 
 #### What is this module doing?
 
-'MMM-FlightsAbove' is a module for displaying what is currently flying around in the airspace above your location.
-The *location* is defined by a boundary box (BB) whose sides are determined by the a radial distance from a central point
-given by the latitude, longitude and a radius in kilometer. To easily calculate the BB given a geograpthical location, 
-we have included a tool that does the calculation for you. 
+'MMM-FlightsAbove' is a module for displaying what is currently flying around in the airspace above some location.
+The *location* is defined by a boundary box (BB) whose sides are determined by the a radial distance (R) from 
+a central point (the radar) given by the *latitude* and *longitude*. The radius is in *kilometers*. To easily 
+calculate the BB given a geograpthical location, we have included a tool that does the calculation for you. 
 
-The flight data is provided by [FlightRadar24](https://www.flightradar24.com/), but could be easily extended to use other sources as well.
+The flight data is provided by [FlightRadar24](https://www.flightradar24.com/), but could be easily extended 
+to use other sources as well.
 
 The specific flight data items available for display are: 
 
@@ -119,7 +120,7 @@ npm install mmm-flightsabove
 
 To configure the FlightsAbove, you need to do the following:
 
-1. Add the Module to the global MM *config.js* 
+1. Add the Module to the global MM `config.js` 
 2. Edit the global config to add the 4 lat/lon values for the Boundary Box of your location
 3. [optional] Edit `MMM-FlightsAbove.js` Tabulator settings to:
     - select & configure the table rows you want to show
@@ -155,8 +156,6 @@ You can change this configuration later when you see that it works.
 
 #### The Boundary Box Coordinates
 
-`WIP`
-
 Unfortunately, the API is operating with a geographical boundary-box (BB), rather than a sphercial radius from 
 a given location. So you need to convert your locations Lat/Lon (in decimal degrees) to the 4 coordinates 
 representing the sides of the BB. These are given by: `Max Lat, Min Lon, Min Lat, Max Lon`, or in other words:
@@ -164,8 +163,10 @@ representing the sides of the BB. These are given by: `Max Lat, Min Lon, Min Lat
 
 However, I have made a simple GoogleMap based tool that make this calculation trivial. Just enter your
 radar center Lat/Lon and the radius. Hit calculate and copy/paste the resulting FR24 BB coordinates into 
-the MM config file. Simply point your browser to the file: `MagicRadarBB.html`.
-(You will need to enter your own Google API key in that file.)
+the MM config file. Simply point your browser to the file: `./tools/MagicRadarBB.html`. However, you will 
+need to get and enter [your own Google Maps API key](https://developers.google.com/maps/documentation/javascript/get-api-key) in that file.
+
+Eventually, we would like to calculate this automatically in the `node_helper.js` script. (See issues)
 
 
 **Q: What radius should I use?**
@@ -198,6 +199,7 @@ For an interesting London discussion, see [this](https://www.metabunk.org/how-fa
 
 `*` - **not yet implemented - ToDo!**
 
+---
 
 :warning: 
 
@@ -257,9 +259,10 @@ For all other or general questions, please refer to the [MagicMirror Forum](http
 
 #### Credits 
 
-Most grateful thanks to:  
+Most grateful thanks to:
+* @raywo - for clarifying and fixing the API response mechanism 
+* @tbbear - for clarifying JS Promises
 
-TBA
 
 #### License 
 
