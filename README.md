@@ -190,7 +190,7 @@ For an interesting London discussion, see [this](https://www.metabunk.org/how-fa
 |:----------------- |:---------------- |:------------ | 
 | header            | "Flights Above"  | This Module's header text |
 | headingIndicator  | "decimal"        | ["decimal", "compass"] Type of heading indicator (I.e. "45" vs "NE") |
-| updateInterval    | 5*60*1000        | Module data update rate in [ms] |
+| updateInterval    | `5*60*1000`      | Module data update rate in [ms] |
 | maxItems*         | 10               | MAX number of planes (table rows) to show |
 | radarBBox*        | [see text]       | The geographical (map) boundary-box (BB) |
 | radarLocation*    | [see text]       | The location of radar center in decimal degrees |
