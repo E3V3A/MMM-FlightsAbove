@@ -48,6 +48,7 @@ The specific flight data items available for display are:
 Module Screenshot:
 
 ![Full](./images/FlightsAbove1.png)
+
 (From the [MMM-Tabulator](https://github.com/E3V3A/MMM-Tabulator) Demo.)
 
 The `MagicRadarBB.html` *Boundary Box Calculator* Screenshot:
@@ -259,8 +260,8 @@ For all other or general questions, please refer to the [MagicMirror Forum](http
 #### Credits 
 
 Most grateful thanks to:
-* @raywo - for clarifying and fixing the API response mechanism 
-* @tbbear - for clarifying JS Promises
+* [raywo](https://github.com/raywo/) - for clarifying and fixing the API response mechanism 
+* [tbbear](https://github.com/tbbear/) - for helping and clarifying JS Promises
 
 
 #### License 

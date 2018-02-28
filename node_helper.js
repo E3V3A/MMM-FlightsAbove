@@ -41,9 +41,7 @@ const radar = require('flightradar24-client/lib/radar'); // Returns an Array of 
 module.exports = NodeHelper.create({
 
     start: function() {
-        //console.log("------------------------------------------------------------");
         console.log(this.name + " started");
-        //console.log("------------------------------------------------------------");
         this.config = null;
         // get radar CONFIG here?
         //this.sendSocketNotification("REQUEST_RADAR_CONFIG");
@@ -80,33 +78,3 @@ module.exports = NodeHelper.create({
     }
 
 });
-
-// To check if something is JSON
-function isJSON(str) {
-    try { return (JSON.parse(str) && !!str); }
-    catch (e) { return false; }
-}
-
-// To check if something is an Array or Object (parsed JSON)
-function isAO(val) {
-    return val instanceof Array || val instanceof Object ? true : false;
-}
-
-// --------------------------------------------------------------------------
-// What:  A dirt simple JSON cleanup function that also compactifies the data
-// NOTE:  - Only use on flat and trustworthy ASCII JSON data!
-//        - Cannot handle any characters outside [A-Za-z0-9_\-]. (e.g. UTF-8)
-//        - Using remote data without further sanitation is a security risk!
-// --------------------------------------------------------------------------
-const re1 = /([A-Za-z0-9_\-]+):/gm;  // use const to make sure it is compiled
-function jZen(juice) {
-    //let re1 = /([A-Za-z0-9_\-]+):/gm; // Find all ASCII words $1 before an ":"
-    //let data = juice;
-    let str = "";
-    str = juice.replace(/\s/gm, '');     // Remove all white-space
-    str = str.replace(/\'/gm, '\"');    // Replace all ' with "
-    str = str.replace(re1, '\"$1\":');  // Replace $1: with "$1":
-    //console.log("Dirty JSON is:\n" + data.toString() );
-    //console.log("Clean JSON is:\n" + str);
-    return str;
-}
