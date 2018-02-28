@@ -25,8 +25,11 @@
  *      "parse-jsonp"
  *      "pinkie-promise"
  * --------------------------------------------------------------------------
- * NOTES:
+ * DEV NOTES:
  *   - Try-catch is only for synchronous operations! (not async)
+ *   -  Google maps BoundingBox Limits are defined by 2 corner points:
+ *      SW and NE, whereas Flightradar24 API are using NW and SE corners!
+ *      radar(LatMax/North, LonMin/West, LatMin/South, LonMax/East)
  *   - .
  * --------------------------------------------------------------------------
  */
@@ -49,7 +52,6 @@ module.exports = NodeHelper.create({
 
     stop: function() {
         console.log(this.name + " is shutting down");
-        //this.connection.close();
     },
 
     radarPing: function() {
@@ -73,7 +75,7 @@ module.exports = NodeHelper.create({
             this.radarPing();
             setInterval(() => {
                 this.radarPing();
-            }, this.config.updateInterval);
+            }, this.config.updateInterval * 1000 );
         }
     }
 

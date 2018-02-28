@@ -7,10 +7,11 @@
 
 #### What is this module doing?
 
-'MMM-FlightsAbove' is a module for displaying what is currently flying around in the airspace above some location.
-The *location* is defined by a boundary box (BB) whose sides are determined by the a radial distance (R) from 
-a central point (the radar) given by the *latitude* and *longitude*. The radius is in *kilometers*. To easily 
-calculate the BB given a geograpthical location, we have included a tool that does the calculation for you. 
+'MMM-FlightsAbove' is a [MagicMirror](https://github.com/MichMich/MagicMirror) module for displaying what is 
+currently flying around in the airspace above some location. The *location* is defined by a boundary box (BB) 
+whose sides are determined by the a radial distance (R) from a central point (the radar) given by the 
+*latitude* and *longitude*. The radius is in *kilometers*. To easily calculate the BB, given a geograpthical 
+location, we have included a tool that does the calculation for you. 
 
 The flight data is provided by [FlightRadar24](https://www.flightradar24.com/), but could be easily extended 
 to use other sources as well.
@@ -239,7 +240,7 @@ The main part to configure is found under the `loadTabulator()` function:
 
 ```
 
-For further details about configuring the many Tabulator options, see [MMM-Tabulator](https://github.com/E3V3A/MMM-FlightsAbove/issues) and references therein.
+For further details about configuring the many Tabulator options, see [MMM-Tabulator](https://github.com/E3V3A/MMM-Tabulator/) and references therein.
 
 
 ---
@@ -249,7 +250,7 @@ For further details about configuring the many Tabulator options, see [MMM-Tabul
 :information_source: The data provided by the *flightradar24-client*, is not JSON, even if it resembles it. It is 
 actually an *Array of JavaScript objects*. For an example of the raw data, look at the `demo.json` file.
 
-For other bugs, issues, details and updates, please refer to the [issue tracker](https://github.com/E3V3A/MMM-Tabulator/issues).
+For other bugs, issues, details and updates, please refer to the [issue tracker](https://github.com/E3V3A/MMM-FlightsAbove/issues).
 
 
 #### Contribution

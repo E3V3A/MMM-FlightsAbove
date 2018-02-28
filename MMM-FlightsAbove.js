@@ -37,7 +37,7 @@ Module.register('MMM-FlightsAbove',{
 //        radarLocation: "23.2,54.2",       // [Lat,Lon] - The location of radar center in decimal degrees
 //        radarRadius: 60,                  // [km] - The maximum distance of planes shown.
 //        watchList: "",                    // Highlight planes/flights/types on watch list
-        updateInterval: 180000              // [ms] 3*60*1000 // Radar scan/ping/update period [default 3 min]
+        updateInterval: 180                 // [ms] 3*60*1000 // Radar scan/ping/update period [default 3 min]
     },
 
     requiresVersion: "2.1.0",
