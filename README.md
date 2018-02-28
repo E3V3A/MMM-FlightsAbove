@@ -209,6 +209,7 @@ For an interesting London discussion, see [this](https://www.metabunk.org/how-fa
 > by the Flightradar24 API. You also risk getting blocked by their servers if you rapid fire requests.
 > Finally, the services provided by them could break at any time, there are no service guarantees.  
 
+:warning: 
 
 ---
 
@@ -244,10 +245,8 @@ For further details about configuring the many Tabulator options, see [MMM-Tabul
 
 #### Bugs and Warnings
 
-:warning: The JSON data provided by the *flightradar24-client*, is not in proper JSON format. 
-(For an example of the raw data, look at the `demo.json` file.) Therefore it need to be "fixed"
-by passing the data through either a sanitizer `jZen()` or with `JSON.stringify()`. 
-
+:information_source: The data provided by the *flightradar24-client*, is not JSON, even if it resembles it. It is 
+actually an *Array of JavaScript objects*. For an example of the raw data, look at the `demo.json` file.
 
 For other bugs, issues, details and updates, please refer to the [issue tracker](https://github.com/E3V3A/MMM-Tabulator/issues).
 
