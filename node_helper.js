@@ -3,8 +3,8 @@
  * FileName:     node_helper.js
  * Author:       E:V:A
  * License:      MIT
- * Date:         2018-02-28
- * Version:      1.0.0
+ * Date:         2018-03-01
+ * Version:      1.0.1
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -46,6 +46,7 @@ module.exports = NodeHelper.create({
     start: function() {
         console.log(this.name + " started");
         this.config = null;
+        this.started = false;   // (update timer)
         // get radar CONFIG here?
         //this.sendSocketNotification("REQUEST_RADAR_CONFIG");
     },
@@ -69,13 +70,17 @@ module.exports = NodeHelper.create({
     },
 
     socketNotificationReceived: function (notification, payload) {
-        if (notification === "START_RADAR") {
+        // We save this.started (update timer) status, to prevent mutiple timer restarts
+        // for each new client connection/instance.
+        const self = this; // (update time)
+        if (notification === "START_RADAR" && this.started == false) {
             //console.log("Received START_RADAR");
             this.config = payload;
             this.radarPing();
             setInterval(() => {
                 this.radarPing();
             }, this.config.updateInterval * 1000 );
+            self.started = true; // update timer is started
         }
     }
 

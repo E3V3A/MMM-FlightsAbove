@@ -9,6 +9,11 @@ Q: How?
 A: By carefully describing what was: *added, fixed*, and *changed*.
 
 
+#### [1.0.1] - 2018-03-01
+
+- Fixed update timer for multiple connection instances (fixes #10)
+- Fixed updateInterval config to use seconds instead of milliseconds (fixes #3)
+
 #### [1.0.0] - 2018-02-28
 
 - First working Version

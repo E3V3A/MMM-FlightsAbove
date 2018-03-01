@@ -3,8 +3,8 @@
  * FileName:     MMM-FlightsAbove.js
  * Author:       E:V:A
  * License:      MIT
- * Date:         2018-02-28
- * Version:      1.0.0
+ * Date:         2018-03-01
+ * Version:      1.0.1
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -29,11 +29,11 @@ Module.register('MMM-FlightsAbove',{
 
     defaults: {
 //        header: "Flights Above",          // The module header text, if any. (Use: "" to remove.)
-//        headingIndicator: "decimal",      // ["decimal", "compass"] Type of heading indicator (I.e. "45" vs "NE")
+//        compassHeading: false,            // Type of heading indicator. ["true" gives "NE", instead of "45" (degrees)]
 //        maxItems: 10,                     // MAX Number of planes to display [default is 10]
         // The geographical (map) Boundary-Box (BB), from within planes will be shown are given by:
         // the maximim Lat/Lon edges of: [N-lat, W-lon, S-lat, E-lon] - all in decimal degrees.
-//        radarBBox: "-8.20917,114.62177,-9.28715,115.71243", // "DPS" (Bali Airport)
+        radarBBox: [-8.20917,114.62177,-9.28715,115.71243], // "DPS" (Bali Airport)
 //        radarLocation: "23.2,54.2",       // [Lat,Lon] - The location of radar center in decimal degrees
 //        radarRadius: 60,                  // [km] - The maximum distance of planes shown.
 //        watchList: "",                    // Highlight planes/flights/types on watch list

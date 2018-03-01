@@ -2,7 +2,7 @@
 
 | STATUS: | Version | Date | Maintained? |
 |:------- |:------- |:---- |:----------- |
-| Working | `1.0.1` | 2018-02-28 | YES |
+| Working | `1.0.1` | 2018-03-01 | YES |
 
 
 #### What is this module doing?
