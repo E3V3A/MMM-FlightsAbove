@@ -9,6 +9,17 @@ Q: How?
 A: By carefully describing what was: *added, fixed*, and *changed*.
 
 
+
+#### [1.0.2] - 2018-03-01
+
+- Added config option radarBBox (fixes #7)
+- Added config option compassHeading (fixes #12)
+- Fixed Bearing center alignment
+- Added layoutColumnsOnNewData to Tabulator
+- Enabled fitDataFill in Tabulator
+- Increased default MAX table height
+
+
 #### [1.0.1] - 2018-03-01
 
 - Fixed update timer for multiple connection instances (fixes #10)

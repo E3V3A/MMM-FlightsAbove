@@ -4,7 +4,7 @@
  * Author:       E:V:A
  * License:      MIT
  * Date:         2018-03-01
- * Version:      1.0.1
+ * Version:      1.0.2
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -56,9 +56,8 @@ module.exports = NodeHelper.create({
     },
 
     radarPing: function() {
-            // EDIT THE NEXT LINE WITH YOUR OWN BOUNDARY BOX
-            //radar(-8.20917,114.62177,-9.28715,115.71243)  // "DPS" (Bali Airport)
-            radar(53.05959,12.52388,51.98161,14.29552)      // (Berlin)
+            const bb = this.config.radarBBox
+            radar(bb[0],bb[1],bb[2],bb[3])
             .then((flights) => {
                 this.sendSocketNotification("NEW_RADAR_DATA", flights);
                 //console.log("Sending NEW_RADAR_DATA:");

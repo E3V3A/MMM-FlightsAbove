@@ -2,12 +2,12 @@
 
 | STATUS: | Version | Date | Maintained? |
 |:------- |:------- |:---- |:----------- |
-| Working | `1.0.1` | 2018-03-01 | YES |
+| Working | `1.0.2` | 2018-03-01 | YES |
 
 
 #### What is this module doing?
 
-'MMM-FlightsAbove' is a [MagicMirror](https://github.com/MichMich/MagicMirror) module for displaying what is 
+*MMM-FlightsAbove* is a [MagicMirror](https://github.com/MichMich/MagicMirror) module for displaying what is 
 currently flying around in the airspace above some location. The *location* is defined by a boundary box (BB) 
 whose sides are determined by the a radial distance (R) from a central point (the radar) given by the 
 *latitude* and *longitude*. The radius is in *kilometers*. To easily calculate the BB, given a geograpthical 
@@ -22,7 +22,7 @@ The specific flight data items available for display are:
 | Data Item     | Description |
 |:------------- |:----------- |
 | id            | Unique F24 id ? |
-| modeS         | Mode-S Transponder code: 6-digit [hex] is a 24-bit ICAO issued code |
+| modes         | Mode-S Transponder code: 6-digit [hex] is a 24-bit ICAO issued code |
 | latitude      | in decimal degrees |
 | longitude     | in decimal degrees |
 | bearing       | in [degrees] |
@@ -139,16 +139,16 @@ Add the module to the modules array in the `config/config.js` file by adding the
     header: 'Flights Above',
     position: 'top_left',
     config: {
-        //header: "Flights Above",        // The module header text, if any. (Use: "" to remove.)
-        //headingIndicator: "decimal",    // ["decimal", "compass"] Type of heading indicator (I.e. "45" vs "NE")
-        updateInterval: 10000,          // [ms] 3*60*1000 // Radar scan/ping/update period [default 3 min]
+        //header: "Flights Above",        // The module header text, if any. Use: "" to remove.
+        //compassHeading: false,          // Use a compass direction (NSWE) for the of heading indicator ("45" vs "NE")
+        updateInterval: 180,              // [s] Radar scan/ping/update period in secodns [default 3 min]
         //maxItems: 10,                   // MAX Number of planes to display [default is 10]
         // The geographical (map) Boundary-Box (BB), from within planes will be shown are given by:
         // the maximim Lat/Lon edges of: [N-lat, W-lon, S-lat, E-lon] - all in decimal degrees.
-        //radarBBox: "-8.20917,114.62177,-9.28715,115.71243", // "DPS" (Bali Airport) [default]
+        //radarBBox: [-8.20917,114.62177,-9.28715,115.71243], // "DPS" (Bali Airport) [default]
         //radarLocation: "23.2,54.2",     // [Lat,Lon] - The location of radar center in decimal degrees
         //radarRadius: 60,                // [km] - The maximum distance of planes shown.
-        //watchList: "",                   // Highlight planes/flights/types on watch list
+        //watchList: "",                  // Alert or Highlight planes/flights/types on this watch list
     }
 },
 ...
@@ -191,8 +191,8 @@ For an interesting London discussion, see [this](https://www.metabunk.org/how-fa
 | Option            | Default          | Description  |
 |:----------------- |:---------------- |:------------ | 
 | header            | "Flights Above"  | This Module's header text |
-| headingIndicator  | "decimal"        | ["decimal", "compass"] Type of heading indicator (I.e. "45" vs "NE") |
-| updateInterval    | `5*60*1000`      | Module data update rate in [ms] |
+| CompassHeading*   | false            | Use a compass direction (NSWE) for the of heading indicator ("45" vs "NE") |
+| updateInterval    | 180              | Module data update rate in [seconds] |
 | maxItems*         | 10               | MAX number of planes (table rows) to show |
 | radarBBox*        | [see text]       | The geographical (map) boundary-box (BB) |
 | radarLocation*    | [see text]       | The location of radar center in decimal degrees |

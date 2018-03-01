@@ -4,7 +4,7 @@
  * Author:       E:V:A
  * License:      MIT
  * Date:         2018-03-01
- * Version:      1.0.1
+ * Version:      1.0.2
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -29,7 +29,7 @@ Module.register('MMM-FlightsAbove',{
 
     defaults: {
 //        header: "Flights Above",          // The module header text, if any. (Use: "" to remove.)
-//        compassHeading: false,            // Type of heading indicator. ["true" gives "NE", instead of "45" (degrees)]
+        compassHeading: false,            // Type of heading indicator. ["true" gives "NE", instead of "45" (degrees)]
 //        maxItems: 10,                     // MAX Number of planes to display [default is 10]
         // The geographical (map) Boundary-Box (BB), from within planes will be shown are given by:
         // the maximim Lat/Lon edges of: [N-lat, W-lon, S-lat, E-lon] - all in decimal degrees.
@@ -101,6 +101,8 @@ Module.register('MMM-FlightsAbove',{
     // This comes from YOUR module, usually "node_helper.js"
     socketNotificationReceived: function(notification, payload) {
         switch (notification) {
+            //case "RADAR_CONFIG":
+                //break;
             case "NEW_RADAR_DATA":
                 this.loaded = true;
                 this.setTableData(payload);
@@ -124,7 +126,7 @@ Module.register('MMM-FlightsAbove',{
                 return (value * 0.3048).toFixed(0);
             },
         });*/
-
+        let self = this;
         Tabulator.extendExtension("format", "formatters", {
             ft2mt:function(cell, formatterParams) {              // Feet to Meters
                 return  (0.3048*cell.getValue()).toFixed(0);
@@ -138,6 +140,7 @@ Module.register('MMM-FlightsAbove',{
                 return date.toLocaleString('en-GB', { hour:'numeric', minute:'numeric', second:'numeric', hour12:false } );
             },
             deg2dir:function(cell, formatterParams) {           // Heading [deg] to approximate Compass Direction
+                if (!self.config.compassHeading) { return cell; }
                 let val = Math.floor((cell.getValue() / 22.5) + 0.5);
                 let arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
                 return arr[(val % 16)];
@@ -166,10 +169,12 @@ Module.register('MMM-FlightsAbove',{
         let flightTable = $("#flightsabove");
 
         flightTable.tabulator({
-            height:205,                         // Set height of table, this enables the Virtual DOM and improves render speed
-            //layout:"fitColumns",                // Fit columns to width of table (optional)
+            height:264,          //205 264 311  // [~33 px/row] Set MAX height of table, this enables the Virtual DOM and improves render speed
+            layout:"fitDataFill",               // Resize columns to fit thier data and ensure rows takeup the full table width
+            //layout:"fitColumns",                // Resize columns so that they fit perfectly inside the width of the container
+            layoutColumnsOnNewData:true,        // Adjust the column width to the data each time you load it into the table
             //headerSort:false,                   // Disable header sorter
-            resizableColumns:false,             // Disable column resize
+            resizableColumns:false,             // Disable manual column resize
             responsiveLayout:true,              // Enable responsive layouts
             placeholder:"Waiting for data...",  // Display message to user on empty table
             initialSort:[                       // Define the sort order:
@@ -182,8 +187,8 @@ Module.register('MMM-FlightsAbove',{
                 {title:"CallSig",       field:"callsign",       headerSort:false, sortable:false, visible:true, responsive:3},
                 {title:"To",            field:"destination",    headerSort:false, sortable:false, responsive:0},
                 {title:"From",          field:"origin",         headerSort:false, sortable:false, responsive:0},
-                {title:"Speed",         field:"speed",          headerSort:false, sortable:false, responsive:2, formatter:"kn2km"}, // [km/h]
-                {title:"Bearing",       field:"bearing",        headerSort:false, sortable:false, responsive:1},
+                {title:"Speed",         field:"speed",          headerSort:false, sortable:false, responsive:2, formatter:"kn2km"},   // [km/h]
+                {title:"Bearing",       field:"bearing",        headerSort:false, sortable:false, responsive:1, formatter:"deg2dir", align:"center"}, // [deg/dir]
                 {title:"Alt [m]",       field:"altitude",       headerSort:false, sortable:false, responsive:0, formatter:"ft2mt", align:"right", sorter:"number"},
                 //{title:"Alt [m]",       field:"altitude",       sortable:true,  responsive:0, align:"right", sorter:"number", mutateType:"data", mutator:ft2met"},
                 // Additional items:

@@ -13,7 +13,7 @@
 
 /* Theme the Tabulator element */
 #flightsabove {
-  /* The (max) table height is hardcoded in MMM-Table.js */
+  /* The MAX table height is hardcoded in MMM-FlightsAbove.js */
   width: 100%;               /* 600px */ 
   font-family: sans-serif;
   font-size: 12px;           /* remove? */
@@ -21,6 +21,25 @@
   border: none;              /*border: 1px solid #333;*/
   /*border-radius: 10px;*/
 }
+
+/*----------------------------------- 
+ *  Theme for special flights (rows) 
+ *----------------------------------- */ 
+
+/* For airport IATA codes (takeoff-landing) */ 
+#flightsabove .iata {
+    font-color: #0f0;       /* Lime */
+    /*font-color: #f0f;*/   /* Fuchsia */ 
+    /*font-color: #0ff;*/   /* Aqua */ 
+}
+
+/* For Military, EMS or UFO */ 
+#flightsabove .ufo {
+    font-color: #f00;       /* Red */
+}
+
+/* --------------------------------- */
+
 
 #flightsabove .tabulator {
     background-color: #000;
