@@ -16,7 +16,7 @@ location, we have included a tool that does the calculation for you.
 The flight data is provided by [FlightRadar24](https://www.flightradar24.com/), but could be easily extended 
 to use other sources as well.
 
-The specific flight data items available for display are: 
+The specific flight data items available from the API that you can display are: 
 
 
 | Data Item     | Description |
@@ -139,13 +139,13 @@ Add the module to the modules array in the `config/config.js` file by adding the
     header: 'Flights Above',
     position: 'top_left',
     config: {
-        //header: "Flights Above",        // The module header text, if any. Use: "" to remove.
-        //compassHeading: false,          // Use a compass direction (NSWE) for the of heading indicator ("45" vs "NE")
+        header: "Flights Above",          // The module header text, if any. Use: "" to remove.
+        compassHeading: true,             // Use a compass direction (NSWE) for the of heading indicator ("45" vs "NE")
         updateInterval: 180,              // [s] Radar scan/ping/update period in secodns [default 3 min]
         //maxItems: 10,                   // MAX Number of planes to display [default is 10]
         // The geographical (map) Boundary-Box (BB), from within planes will be shown are given by:
         // the maximim Lat/Lon edges of: [N-lat, W-lon, S-lat, E-lon] - all in decimal degrees.
-        //radarBBox: [-8.20917,114.62177,-9.28715,115.71243], // "DPS" (Bali Airport) [default]
+        radarBBox: [-8.20917,114.62177,-9.28715,115.71243], // "DPS" (Bali Airport) [default]
         //radarLocation: "23.2,54.2",     // [Lat,Lon] - The location of radar center in decimal degrees
         //radarRadius: 60,                // [km] - The maximum distance of planes shown.
         //watchList: "",                  // Alert or Highlight planes/flights/types on this watch list
@@ -185,49 +185,62 @@ For an interesting London discussion, see [this](https://www.metabunk.org/how-fa
 
 #### Configuration Options 
 
-`WIP`
-
 
 | Option            | Default          | Description  |
 |:----------------- |:---------------- |:------------ | 
 | header            | "Flights Above"  | This Module's header text |
-| CompassHeading*   | false            | Use a compass direction (NSWE) for the of heading indicator ("45" vs "NE") |
+| compassHeading    | true             | Use a compass direction (NSWE) for the of heading indicator ("45" vs "NE") |
 | updateInterval    | 180              | Module data update rate in [seconds] |
 | maxItems*         | 10               | MAX number of planes (table rows) to show |
-| radarBBox*        | [see text]       | The geographical (map) boundary-box (BB) |
+| radarBBox         | [see text]       | The geographical boundary-box in NW-SE notation [dec.degrees] |
 | radarLocation*    | [see text]       | The location of radar center in decimal degrees |
 | radarRadius*      | [see text]       | The maximum distance of planes shown |
-| watchList*        | []               | Highlight planes/flights/types on watch list |
+| watchList*        | [see text]       | Highlight planes/flights/types on watch list |
+| speedunit*        | "kmh"            | [kmh,kn] The speed unit |
+| altunit*          | "m"              | [m,ft] The Altitude unit | 
+| fontsize*         | "small"          | [small,medium,large] |
+| itemlist*         | [see text]       | List of items (columns) to be shown |
 
 `*` - **not yet implemented - ToDo!**
 
----
+The default table columns shown, are: `[flight,callsig,to,from,alt,speed,bearing,alt,model,squawk]`
+But there are also: `[id,registration,model,modes,radar]` available. 
+
+
+```diff
+-▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+```
 
 :warning: 
 
-> Please do not use an `updateInterval` shorter than ~2 minutes (120,000 [ms]). A too short setting
-> is useless as planes do not move across the visible sky that fast, and no, you will not be able 
-> to see F16's or MIG's. They are not tracked by F24. So please respect the free services provided 
-> by the Flightradar24 API. You also risk getting blocked by their servers if you rapid fire requests.
-> Finally, the services provided by them could break at any time, there are no service guarantees.  
+Please do not use an `updateInterval` shorter than ~2 minutes (120 seconds). A too short setting
+is useless as planes do not move across the visible sky that fast, and no, you will not be able 
+to see F16's or MIG's, as they are not tracked by F24. So please respect the free services provided 
+by the Flightradar24 API. You also risk getting blocked by their servers if you rapid fire requests.
+Finally, the services provided by them could break at any time, there are no service guarantees.  
 
 :warning: 
 
----
+```diff
+-▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+```
 
-#### `Tabulator` configuration
+
+#### *Tabulator* Configuration
 
 The main part to configure is found under the `loadTabulator()` function:
 
 ```javascript
 ...
     flightTable.tabulator({
-        height:205,                         // Set height of table, this enables the Virtual DOM and improves render speed
-        //layout:"fitColumns",                // Fit columns to width of table (optional)
-        //headerSort:false,                   // Disable header sorter
-        resizableColumns:false,             // Disable column resize
+        height:264,          //205 264 311  // [~33 px/row] Set MAX height of table, this enables the Virtual DOM and improves render speed
+        layout:"fitDataFill",               // Resize columns to fit thier data and ensure rows takeup the full table width
+        //layout:"fitColumns",              // Resize columns so that they fit perfectly inside the width of the container
+        layoutColumnsOnNewData:true,        // Adjust the column width to the data each time you load it into the table
+        //headerSort:false,                 // Disable header sorter
+        resizableColumns:false,             // Disable manual column resize
         responsiveLayout:true,              // Enable responsive layouts
-        placeholder:"No Data Available",    // Display message to user on empty table
+        placeholder:"Waiting for data...",  // Display message to user on empty table
         initialSort:[                       // Define the sort order:
             {column:"altitude",     dir:"asc"},     // 1'st
             //{column:"flight",     dir:"desc"},    // 2'nd
