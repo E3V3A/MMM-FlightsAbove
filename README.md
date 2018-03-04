@@ -2,7 +2,7 @@
 
 | STATUS: | Version | Date | Maintained? |
 |:------- |:------- |:---- |:----------- |
-| Working | `1.0.2` | 2018-03-01 | YES |
+| Working | `1.0.3` | 2018-03-04 | YES |
 
 
 #### What is this module doing?
@@ -142,7 +142,7 @@ Add the module to the modules array in the `config/config.js` file by adding the
         header: "Flights Above",          // The module header text, if any. Use: "" to remove.
         compassHeading: true,             // Use a compass direction (NSWE) for the of heading indicator ("45" vs "NE")
         updateInterval: 180,              // [s] Radar scan/ping/update period in secodns [default 3 min]
-        //maxItems: 10,                   // MAX Number of planes to display [default is 10]
+        maxItems: 10,                     // MAX Number of planes to display [default is 10]
         // The geographical (map) Boundary-Box (BB), from within planes will be shown are given by:
         // the maximim Lat/Lon edges of: [N-lat, W-lon, S-lat, E-lon] - all in decimal degrees.
         radarBBox: [-8.20917,114.62177,-9.28715,115.71243], // "DPS" (Bali Airport) [default]
@@ -210,14 +210,13 @@ But there are also: `[id,registration,model,modes,radar]` available.
 ```diff
 -▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 ```
-
 :warning: 
 
-Please do not use an `updateInterval` shorter than ~2 minutes (120 seconds). A too short setting
-is useless as planes do not move across the visible sky that fast, and no, you will not be able 
-to see F16's or MIG's, as they are not tracked by F24. So please respect the free services provided 
-by the Flightradar24 API. You also risk getting blocked by their servers if you rapid fire requests.
-Finally, the services provided by them could break at any time, there are no service guarantees.  
+> Please do not use an **updateInterval** shorter than ~2 minutes (120 seconds). A too short setting
+> is useless as planes do not move across the visible sky that fast, and no, you will not be able 
+> to see F16's or MIG's, as they are not tracked by F24. So please respect the free services provided 
+> by the Flightradar24 API. You also risk getting blocked by their servers if you rapid fire requests.
+> Finally, the services provided by them could break at any time, there are no service guarantees.  
 
 :warning: 
 
@@ -233,7 +232,7 @@ The main part to configure is found under the `loadTabulator()` function:
 ```javascript
 ...
     flightTable.tabulator({
-        height:264,          //205 264 311  // [~33 px/row] Set MAX height of table, this enables the Virtual DOM and improves render speed
+        height:flightTableHeight,           // [px] Set MAX height of table, this enables the Virtual DOM and improves render speed
         layout:"fitDataFill",               // Resize columns to fit thier data and ensure rows takeup the full table width
         //layout:"fitColumns",              // Resize columns so that they fit perfectly inside the width of the container
         layoutColumnsOnNewData:true,        // Adjust the column width to the data each time you load it into the table
@@ -276,6 +275,7 @@ For all other or general questions, please refer to the [MagicMirror Forum](http
 Most grateful thanks to:
 * [raywo](https://github.com/raywo/) - for clarifying and fixing the API response mechanism 
 * [tbbear](https://github.com/tbbear/) - for helping and clarifying JS Promises
+* [fewieden](https://github.com/fewieden) - for helping out in forums and fixing issues
 
 
 #### License 

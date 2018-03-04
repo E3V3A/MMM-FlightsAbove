@@ -10,6 +10,12 @@ A: By carefully describing what was: *added, fixed*, and *changed*.
 
 
 
+#### [1.0.3] - 2018-03-04
+
+- Added config option maxItems (fixes #4)
+- Fixed immediate data avilablity for new clients (fixes #14)
+
+
 #### [1.0.2] - 2018-03-01
 
 - Added config option radarBBox (fixes #7)

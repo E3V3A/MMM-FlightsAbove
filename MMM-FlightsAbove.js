@@ -3,8 +3,8 @@
  * FileName:     MMM-FlightsAbove.js
  * Author:       E:V:A
  * License:      MIT
- * Date:         2018-03-01
- * Version:      1.0.2
+ * Date:         2018-03-04
+ * Version:      1.0.3
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -28,16 +28,14 @@
 Module.register('MMM-FlightsAbove',{
 
     defaults: {
-//        header: "Flights Above",          // The module header text, if any. (Use: "" to remove.)
-        compassHeading: false,            // Type of heading indicator. ["true" gives "NE", instead of "45" (degrees)]
-//        maxItems: 10,                     // MAX Number of planes to display [default is 10]
-        // The geographical (map) Boundary-Box (BB), from within planes will be shown are given by:
-        // the maximim Lat/Lon edges of: [N-lat, W-lon, S-lat, E-lon] - all in decimal degrees.
-        radarBBox: [-8.20917,114.62177,-9.28715,115.71243], // "DPS" (Bali Airport)
+        header: "Flights Above",            // The module header text, if any. (Use: "" to remove.)
+        compassHeading: false,              // Type of heading indicator. ["true" gives "NE", instead of "45" (degrees)]
+        maxItems: 8,                        // MAX Number of rows (flights) to display [default is 8]
+        radarBBox: [-8.20917,114.62177,-9.28715,115.71243], // [NLat,WLon,SLat,ELon] in (dec degrees) Default: "DPS"@60 km
 //        radarLocation: "23.2,54.2",       // [Lat,Lon] - The location of radar center in decimal degrees
 //        radarRadius: 60,                  // [km] - The maximum distance of planes shown.
 //        watchList: "",                    // Highlight planes/flights/types on watch list
-        updateInterval: 180                 // [ms] 3*60*1000 // Radar scan/ping/update period [default 3 min]
+        updateInterval: 180                 // [seconds] Radar scan/ping/update period [default 3 min = 180 seconds]
     },
 
     requiresVersion: "2.1.0",
@@ -126,27 +124,28 @@ Module.register('MMM-FlightsAbove',{
                 return (value * 0.3048).toFixed(0);
             },
         });*/
+
         let self = this;
         Tabulator.extendExtension("format", "formatters", {
-            ft2mt:function(cell, formatterParams) {              // Feet to Meters
+            ft2mt: function(cell, formatterParams) {              // Feet to Meters
                 return  (0.3048*cell.getValue()).toFixed(0);
             },
-            kn2km:function(cell, formatterParams) {              // Knots to Kilometers
+            kn2km: function(cell, formatterParams) {              // Knots to Kilometers
                 return  (1.852*cell.getValue()).toFixed(0);
             },
-            ep2time:function(cell, formatterParams) {            // POSIX epoch to hh:mm:ss
+            ep2time: function(cell, formatterParams) {            // POSIX epoch to hh:mm:ss
                 let date = new Date(cell.getValue());
                 // We use "en-GB" only to get the correct formatting for a 24 hr clock, not your TZ.
                 return date.toLocaleString('en-GB', { hour:'numeric', minute:'numeric', second:'numeric', hour12:false } );
             },
-            deg2dir:function(cell, formatterParams) {           // Heading [deg] to approximate Compass Direction
+            deg2dir: function(cell, formatterParams) {            // Heading [deg] to approximate Compass Direction
                 if (!self.config.compassHeading) { return cell; }
                 let val = Math.floor((cell.getValue() / 22.5) + 0.5);
                 let arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
                 return arr[(val % 16)];
             },
 /*
-            sqCheck:function(cell, formatterParams){            // Check squawk codes and warn/highlight for unusual flights
+            sqCheck: function(cell, formatterParams){            // Check squawk codes and warn/highlight for unusual flights
                 let sqwk = new cell.getValue();
 
                 let MilPlanesUS = [{}];
@@ -167,9 +166,10 @@ Module.register('MMM-FlightsAbove',{
         });
 
         let flightTable = $("#flightsabove");
+        var flightTableHeight = ( this.config.maxItems * 33 + 33 );   // @12px font-size we have [~33 px/row]
 
         flightTable.tabulator({
-            height:264,          //205 264 311  // [~33 px/row] Set MAX height of table, this enables the Virtual DOM and improves render speed
+            height:flightTableHeight,           // [px] Set MAX height of table, this enables the Virtual DOM and improves render speed
             layout:"fitDataFill",               // Resize columns to fit thier data and ensure rows takeup the full table width
             //layout:"fitColumns",                // Resize columns so that they fit perfectly inside the width of the container
             layoutColumnsOnNewData:true,        // Adjust the column width to the data each time you load it into the table

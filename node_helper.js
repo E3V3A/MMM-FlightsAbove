@@ -3,8 +3,8 @@
  * FileName:     node_helper.js
  * Author:       E:V:A
  * License:      MIT
- * Date:         2018-03-01
- * Version:      1.0.2
+ * Date:         2018-03-04
+ * Version:      1.0.3
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -59,7 +59,7 @@ module.exports = NodeHelper.create({
             const bb = this.config.radarBBox
             radar(bb[0],bb[1],bb[2],bb[3])
             .then((flights) => {
-                this.radarData = flights;
+                this.radarData = flights; // save data for new clients
                 this.sendSocketNotification("NEW_RADAR_DATA", this.radarData);
                 //console.log("Sending NEW_RADAR_DATA:");
                 //console.log(flights);
