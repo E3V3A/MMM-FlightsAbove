@@ -59,7 +59,8 @@ module.exports = NodeHelper.create({
             const bb = this.config.radarBBox
             radar(bb[0],bb[1],bb[2],bb[3])
             .then((flights) => {
-                this.sendSocketNotification("NEW_RADAR_DATA", flights);
+                this.radarData = flights;
+                this.sendSocketNotification("NEW_RADAR_DATA", this.radarData);
                 //console.log("Sending NEW_RADAR_DATA:");
                 //console.log(flights);
             })
@@ -80,6 +81,8 @@ module.exports = NodeHelper.create({
                 this.radarPing();
             }, this.config.updateInterval * 1000 );
             self.started = true; // update timer is started
+        } else if (notification === "START_RADAR" && this.started == true) {
+            this.sendSocketNotification("NEW_RADAR_DATA", this.radarData);
         }
     }
 
