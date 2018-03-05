@@ -160,13 +160,23 @@ You can change this configuration later when you see that it works.
 
 Unfortunately, the API is operating with a geographical boundary-box (BB), rather than a sphercial radius from 
 a given location. So you need to convert your locations Lat/Lon (in decimal degrees) to the 4 coordinates 
-representing the sides of the BB. These are given by: `Max Lat, Min Lon, Min Lat, Max Lon`, or in other words:
-`north, west, south, east` edges.
+representing the sides of the BB. These are given by: `MaxLat, MinLon, MinLat, MaxLon`, or in other words, 
+the `north, west, south, east` edges. 
 
-However, I have made a simple GoogleMap based tool that make this calculation trivial. Just enter your
-radar center Lat/Lon and the radius. Hit calculate and copy/paste the resulting FR24 BB coordinates into 
-the MM config file. Simply point your browser to the file: `./tools/MagicRadarBB.html`. However, you will 
-need to get and enter [your own Google Maps API key](https://developers.google.com/maps/documentation/javascript/get-api-key) in that file.
+
+However, I have provided a simple GoogleMap based tool that make this calculation trivial. 
+Look at the picture above, to see what to expect. To use the tool the first time, do the following:
+
+1. Have your `Google Maps API Key` handy. You can get one [HERE](https://developers.google.com/maps/documentation/javascript/get-api-key).
+2. Edit the file: `./tools/MagicRadarBB.html` and replacing the text "YOUR_GOOGLE_MAPS_API_KEY" with yuor key.
+3. Simply point your browser to one of the following URLs:
+   * from a local browser, open the file: `./tools/MagicRadarBB.html`
+   * from a local or remote browser, go to: http://localhost:8080/modules/MMM-FlightsAbove/tools/MagicRadarBB.html
+4. Enter the Latitude and Longitude in decimal degrees, for your location.
+5. Enter the radius, out to which you want to see flights. 
+6. [optional] You can also drag the central marker to any point on the map. (Use `+`/`-` to zoom in/out.)
+7. Hit `Calculate` and copy the resulting coordinate text from the `FR24 BB` textbox into your MM config file.
+8. If you get a blank map, your API key is probaly expired, invalid or over-used.
 
 Eventually, we would like to calculate this automatically in the `node_helper.js` script. (See issues)
 
@@ -210,15 +220,12 @@ But there are also: `[id,registration,model,modes,radar]` available.
 ```diff
 -▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 ```
-:warning: 
 
-> Please do not use an **updateInterval** shorter than ~2 minutes (120 seconds). A too short setting
-> is useless as planes do not move across the visible sky that fast, and no, you will not be able 
-> to see F16's or MIG's, as they are not tracked by F24. So please respect the free services provided 
-> by the Flightradar24 API. You also risk getting blocked by their servers if you rapid fire requests.
-> Finally, the services provided by them could break at any time, there are no service guarantees.  
-
-:warning: 
+> :warning: Please do not use an **updateInterval** shorter than ~2 minutes (120 seconds). A too short 
+> setting is useless as planes do not move across the visible sky that fast, and no, you will not be 
+> able to see F16's or MIG's, as they are not tracked by F24. So please respect the free services 
+> provided by the Flightradar24 API. You also risk getting blocked by their servers if you rapid-fire 
+> requests. Finally, the services provided by them could break at any time, there are no service guarantees. :warning: 
 
 ```diff
 -▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃

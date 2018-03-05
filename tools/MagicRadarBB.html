@@ -52,7 +52,7 @@
       &nbsp;(North, West, South, East) = (MaxLat, MinLon, MinLat, MaxLon).</p>
    <p>&nbsp;NW-SE:   <input type="text" "readonly" id="p2" size=60> (FR24 BB)</p>
    <p>&nbsp;SW-NE:   <input type="text" "readonly" id="p1" size=60> (GMaps BB)</p>
-   <p>&nbsp;&nbsp;status:  <input type="text" "readonly" id="status" size=40></p>
+   <p>&nbsp;&nbsp;status:  <input type="text" "readonly" id="status" size=60></p>
 
    <!-- 
    ==========================================================================
@@ -150,6 +150,12 @@
       //------------------------------------------------------------------------
       // Main
       //------------------------------------------------------------------------
+
+      // Google Maps API callback to check API failures
+      function gm_authFailure() { 
+         let apiError = "ERROR: Invalid Gmaps API key! Add your key to this file."
+         document.getElementById('status').value = apiError;
+      };
 
       function reset() {
          //setMapOnAll(null);   // hide all markers
