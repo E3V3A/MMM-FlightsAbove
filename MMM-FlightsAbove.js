@@ -95,7 +95,7 @@ Module.register('MMM-FlightsAbove',{
             // The div with id "flightsabove" now exists, so we can load Tabulate.
             this.loadTabulate();
         }
-        // This come from external control modules like: Hello-Lucy or MMM-voice
+        // This come from external control modules like: Hello-Lucy or MMM-voice.
         if (notification === 'HIDE_FLIGHTS') {
             this.hide(1000);
         }  else if (notification === 'SHOW_FLIGHTS') {
