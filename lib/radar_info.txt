@@ -1,0 +1,6 @@
+This is a modified version of radar(), built updon v0.2.1 and is not used in MMM-FLightsAbove. 
+It is provided as an inforamtive back or future-compatible option.
+
+If you want to use this, then you still need to have the requires.
+Most simply by first installing the v0.3.0 "flightradar24-client" with npm.
+Then just point your requires to this:  `./lib/radar` 

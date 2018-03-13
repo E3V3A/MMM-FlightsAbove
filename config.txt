@@ -1,0 +1,13 @@
+        {
+            module: "MMM-FlightsAbove",
+            header: "Flights Above",                // Default: "Flights Above"
+            position: "top_left",                   // Default: "top_left"
+            config: {
+                        compassHeading: true,       // Default: true    [to show compass directions]
+                        maxItems: 8,                // Default: 8       [lines]
+                        updateInterval: 180,        // Default: 180     [seconds]
+                        homeIata: "TXL",            // Default: "DPS"   [airport IATA code]
+                        // EDIT THE NEXT LINE WITH YOUR OWN BOUNDARY BOX
+                        radarBBox: [53.05959,12.52388,51.98161,14.29552]  // Berlin
+                    }
+        },

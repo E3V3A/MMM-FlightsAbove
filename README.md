@@ -1,17 +1,30 @@
 ## MagicMirror Module: FlightsAbove
 
+[![MagicMirror2](https://img.shields.io/badge/MagicMirror-2.2.2-lightgray.svg)](https://github.com/MichMich/MagicMirror)
+[![DocStatus](https://inch-ci.org/github/E3V3A/MMM-FlightsAbove.svg?branch=master)](https://inch-ci.org/github/E3V3A/MMM-FlightsAbove)
+[![GitHub last commit](https://img.shields.io/github/last-commit/E3V3A/MMM-FlightsAbove.svg)](https://github.com/E3V3A/MMM-FlightsAbove)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/E3V3A/MMM-FlightsAbove/graphs/commit-activity)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/E3V3A/MMM-FlightsAbove.svg)](http://isitmaintained.com/project/E3V3A/MMM-FlightsAbove "Average time to resolve an issue")
+
+Display what is currently flying above your location
+
+
 | STATUS: | Version | Date | Maintained? |
 |:------- |:------- |:---- |:----------- |
-| Working | `1.0.3` | 2018-03-04 | YES |
+| Working | `1.0.4` | 2018-03-13 | YES |
 
 
 #### What is this module doing?
 
 *MMM-FlightsAbove* is a [MagicMirror](https://github.com/MichMich/MagicMirror) module for displaying what is 
-currently flying around in the airspace above some location. The *location* is defined by a boundary box (BB) 
-whose sides are determined by the a radial distance (R) from a central point (the radar) given by the 
-*latitude* and *longitude*. The radius is in *kilometers*. To easily calculate the BB, given a geograpthical 
-location, we have included a tool that does the calculation for you. 
+currently flying around in the airspace above some location. The *location* is defined by the *latitude* and 
+*longitude* of your location, and a radius in *kilometers*, which determine the maximum distance to which you 
+want to detect aircraft.
+
+However, because maps you see and use are flat and squared, internally the application is using a 
+*boundary box* (BB) to determine the area of interest. The BB sides are just the latitutes and longitudes of the map.
+So to easily calculate the BB values given a geographical location, we have included a tool that does the calculation for you. 
+Use this to copy/paste your BB into your configuration file. 
 
 The flight data is provided by [FlightRadar24](https://www.flightradar24.com/), but could be easily extended 
 to use other sources as well.
@@ -21,7 +34,7 @@ The specific flight data items available from the API that you can display are:
 
 | Data Item     | Description |
 |:------------- |:----------- |
-| id            | Unique F24 id ? |
+| id            | Unique F24 id |
 | modes         | Mode-S Transponder code: 6-digit [hex] is a 24-bit ICAO issued code |
 | latitude      | in decimal degrees |
 | longitude     | in decimal degrees |
@@ -71,6 +84,17 @@ This module depend on the following *npm* packages:
 
 These are also listed in the `package.json` file and should be installed automatically when using *npm*.
 However, those may require other packages. 
+
+### Compatibility
+
+This module is compatible with other **remote control** modules such as:
+
+* [Hello-Lucy](https://github.com/mykle1/Hello-Lucy) (This is a plug-in to MMM-voice.) 
+* [MMM-voice](https://github.com/fewieden/MMM-voice)
+
+Those allow you to control this module by Voice commands.
+For example, in Hello-Lucy you can say: "`SHOW FLIGHTS`" or "`HIDE FLIGHTS`" to show or hide this module.
+
 
 ---
 
@@ -156,6 +180,8 @@ Add the module to the modules array in the `config/config.js` file by adding the
 
 You can change this configuration later when you see that it works.
 
+---
+
 #### The Boundary Box Coordinates
 
 Unfortunately, the API is operating with a geographical boundary-box (BB), rather than a sphercial radius from 
@@ -168,13 +194,13 @@ However, I have provided a simple GoogleMap based tool that make this calculatio
 Look at the picture above, to see what to expect. To use the tool the first time, do the following:
 
 1. Have your `Google Maps API Key` handy. You can get one [HERE](https://developers.google.com/maps/documentation/javascript/get-api-key).
-2. Edit the file: `./tools/MagicRadarBB.html` and replacing the text "YOUR_GOOGLE_MAPS_API_KEY" with yuor key.
+2. Edit the file: `./tools/MagicRadarBB.html` and replacing the text "YOUR_GOOGLE_MAPS_API_KEY" with your key.
 3. Simply point your browser to one of the following URLs:
-   * from a local browser, open the file: `./tools/MagicRadarBB.html`
-   * from a local or remote browser, go to: http://localhost:8080/modules/MMM-FlightsAbove/tools/MagicRadarBB.html
-4. Enter the Latitude and Longitude in decimal degrees, for your location.
-5. Enter the radius, out to which you want to see flights. 
-6. [optional] You can also drag the central marker to any point on the map. (Use `+`/`-` to zoom in/out.)
+   * from a local browser, open the file: `./tools/MagicRadarBB.html` in the module directory.
+   * from a local or remote browser, go to: http://192.168.xx.yy:8080/modules/MMM-FlightsAbove/tools/MagicRadarBB.html
+4. Enter the *Latitude* and *Longitude* in decimal degrees, for your location.
+5. Enter the *radius* in kilometer, out to which you want to see flights. 
+6. [*optional*] You can also drag the central marker to any point on the map. (Use `+`/`-` to zoom in/out.)
 7. Hit `Calculate` and copy the resulting coordinate text from the `FR24 BB` textbox into your MM config file.
 8. If you get a blank map, your API key is probaly expired, invalid or over-used.
 
@@ -184,11 +210,11 @@ Eventually, we would like to calculate this automatically in the `node_helper.js
 **Q: What radius should I use?**
 
 **A:** Since there is little use in displaying planes you cannot see, what you really should be 
-asking is, how far can I see an airplane? The answer abviously depend on where you are, and especially 
-how high you are. If you are down in a velley surrounded by mountains, you can use your trigonometry 
-skills to figure that its probably not much more than 30 km, line of sight (LOS). But if you are on top of
-a mountain with free horizon, we could be talking about 120 km, at which point the aircraft would just
-present itself as a tiny spot in the sky. This module is preset at a moderate 60 km LOS.
+asking is, how far can I see an airplane? The answer obviously depend on where you are, and especially 
+how high you are. If you are down in a valley surrounded by mountains, you can use your trigonometry 
+skills to figure that its probably not much more than 30 km, *line of sight* (LOS). But if you are on 
+top of a mountain with free horizon, we could be talking about 120 km, at which point the aircraft would 
+just present itself as a tiny spot in the sky. This module is preset at a moderate 60 km LOS.
 
 For an interesting London discussion, see [this](https://www.metabunk.org/how-far-away-can-i-see-an-aircraft.t4038/).
 
@@ -287,4 +313,7 @@ Most grateful thanks to:
 
 #### License 
 
-MIT 
+[![GitHub 
+license](https://img.shields.io/github/license/E3V3A/MMM-FlightsAbove.svg)](https://github.com/E3V3A/MMM-FlightsAbove/blob/master/LICENSE) 
+
+(MIT)

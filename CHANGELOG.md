@@ -2,12 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
-Q: Why keep a changelog?  
-A: [BECAUSE](http://keepachangelog.com/en/1.0.0/)
+**Q**: *Why keep a changelog?*  
+**A**: [BECAUSE](http://keepachangelog.com/en/1.0.0/)
 
-Q: How?  
-A: By carefully describing what was: *added, fixed*, and *changed*.
+**Q**: *How?*  
+**A**: By carefully describing what was: *added, fixed*, and *changed*.
 
+---
+
+#### [1.0.4] - 2018-03-13
+
+- Added remote control of module from other modules (fixes #18)
+- Added config option for squawk watchList (fixes #13)
+- Added config option for homeIata (fixes #19)
+- Fixed CSS font color bug (fixes #17)
+- Fixed CSS table header background color
+- Added config.txt template to copy into config.js
+- Added new screenshot for flight table 
+- Added badges to README for:
+  + MagicMirror version
+  + Documentation staus
+  + Maintenance status
+  + Average Issue resolve time
+  + MIT License 
+- Removed version info from node_helper.js and MMM-FLightsAbove.js
+- Changed node_helper to use the custom installed flightradar24-client in `./lib` 
+  until new API items are resolved.
 
 
 #### [1.0.3] - 2018-03-04
