@@ -65,6 +65,12 @@ Module Screenshot:
 
 (From the [MMM-Tabulator](https://github.com/E3V3A/MMM-Tabulator) Demo.)
 
+Here is a screenshot when using the config option: `homeIata: "VNO"` and `compassHeading: true` to 
+highlight flights with the origin or destination airport given by the IATA code "VNO". Also the 
+compass heading is given in text form and not in degress. 
+
+![Full](./images/FlightsAbove2.png)
+
 The `MagicRadarBB.html` *Boundary Box Calculator* Screenshot:
 
 ![Full](./images/MagicRadarBB.png)
