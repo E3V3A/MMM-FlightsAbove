@@ -3,8 +3,8 @@
  * FileName:     MMM-FlightsAbove.js
  * Author:       E:V:A
  * License:      MIT
- * Date:         2018-03-04
- * Version:      1.0.3
+ * Date:         2018-03-13
+ * Version:      1.0.4
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -31,10 +31,11 @@ Module.register('MMM-FlightsAbove',{
         header: "Flights Above",            // The module header text, if any. (Use: "" to remove.)
         compassHeading: false,              // Type of heading indicator. ["true" gives "NE", instead of "45" (degrees)]
         maxItems: 8,                        // MAX Number of rows (flights) to display [default is 8]
-        radarBBox: [-8.20917,114.62177,-9.28715,115.71243], // [NLat,WLon,SLat,ELon] in (dec degrees) Default: "DPS"@60 km
-//        radarLocation: "23.2,54.2",       // [Lat,Lon] - The location of radar center in decimal degrees
+        homeIata: "DPS",                    // Airport IATA code for highlighting flights To/From from a "home" airport
+//        radarLocation: "-8.748,115.167",  // [Lat,Lon] - The location of radar center in decimal degrees
 //        radarRadius: 60,                  // [km] - The maximum distance of planes shown.
-//        watchList: "",                    // Highlight planes/flights/types on watch list
+        radarBBox: [-8.20917,114.62177,-9.28715,115.71243],  // [NLat,WLon,SLat,ELon] in (dec degrees) Default: "DPS"@60 km
+        watchList: [1276,5000,5400,5600,6000,6100,6400],     // Highlight planes/flights/types on watch list
         updateInterval: 180                 // [seconds] Radar scan/ping/update period [default 3 min = 180 seconds]
     },
 
@@ -94,6 +95,12 @@ Module.register('MMM-FlightsAbove',{
             // The div with id "flightsabove" now exists, so we can load Tabulate.
             this.loadTabulate();
         }
+        // This come from external control modules like: Hello-Lucy or MMM-voice
+        if (notification === 'HIDE_FLIGHTS') {
+            this.hide(1000);
+        }  else if (notification === 'SHOW_FLIGHTS') {
+            this.show(1000);
+        }
     },
 
     // This comes from YOUR module, usually "node_helper.js"
@@ -144,29 +151,14 @@ Module.register('MMM-FlightsAbove',{
                 let arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
                 return arr[(val % 16)];
             },
-/*
-            sqCheck: function(cell, formatterParams){            // Check squawk codes and warn/highlight for unusual flights
-                let sqwk = new cell.getValue();
 
-                let MilPlanesUS = [{}];
-                let MilPlanesRU = [{}];
-
-                let SqCodesMIL = [{}]; // Squawk codes for Military/Government operations
-                let SqCodesEMG = [{}]; // Squawk codes for Emergencies
-                let SqCodesUFO = [{}]; // Squawk codes that are unusual
-
-                // pseudo code:
-                if (sqwk in SqCodesMIL) { highlight with bright green }
-                if (sqwk in SqCodesEMG) { highlight with bright red & send notfication }
-                if (sqwk in SqCodesUFO) { highlight with bright cyan||magenta }
-
-                return xxxx;
-        },
-*/
         });
+
 
         let flightTable = $("#flightsabove");
         var flightTableHeight = ( this.config.maxItems * 33 + 33 );   // @12px font-size we have [~33 px/row]
+        var sqCodesList = this.config.watchList;
+        var homePort = this.config.homeIata;
 
         flightTable.tabulator({
             height:flightTableHeight,           // [px] Set MAX height of table, this enables the Virtual DOM and improves render speed
@@ -195,18 +187,74 @@ Module.register('MMM-FlightsAbove',{
                 {title:"F24id",         field:"id",             headerSort:false, sortable:false, visible:false},
                 {title:"RegID",         field:"registration",   headerSort:false, sortable:false, visible:false},
                 {title:"Model",         field:"model",          headerSort:false, sortable:false, visible:true,  responsive:1},
-//                {title:"ModeS",         field:"modes",          headerSort:false, sortable:false, visible:false},
-                {title:"ModeS",         field:"modeSCode",          headerSort:false, sortable:false, visible:false},
+                {title:"ModeS",         field:"modes",          headerSort:false, sortable:false, visible:false},
+//                {title:"ModeS",         field:"modeSCode",      headerSort:false, sortable:false, visible:false},
                 {title:"Radar",         field:"radar",          headerSort:false, sortable:false, visible:false},
                 {title:"Lat",           field:"latitude",       headerSort:false, sortable:false, visible:false},
                 {title:"Lon",           field:"longitude",      headerSort:false, sortable:false, visible:false},
-
                 {title:"Time",          field:"timestamp",      headerSort:false, sortable:false, visible:false, responsive:1, formatter:"ep2time"},
+
                 {title:"RoC [ft/m]",    field:"climb",          headerSort:false, sortable:false, visible:false},
                 {title:"Squawk",        field:"squawk",         headerSort:false, sortable:false, visible:true, responsive:1}, // formatter:"sqCheck"},
                 {title:"isGND",         field:"ground",         headerSort:false, sortable:false, visible:false},
                 {title:"isGlider",      field:"glider",         headerSort:false, sortable:false, visible:false},
+//                {title:"RoC [ft/m]",    field:"rateOfClimb",    headerSort:false, sortable:false, visible:false},
+//                {title:"Squawk",        field:"squawkCode",     headerSort:false, sortable:false, visible:true, responsive:1}, // formatter:"sqCheck"},
+//                {title:"isGND",         field:"isOnGround",     headerSort:false, sortable:false, visible:false},
+//                {title:"isGlider",      field:"isGlider",       headerSort:false, sortable:false, visible:false},
             ],
+
+            // INSERT rowFormatter functions here!
+            rowFormatter: function(row) {
+
+                //let sqCodesMIL = [44xx,5000,5100-5300,5400,6000,6100,6400,7501-7577]; // Squawk codes for Military/Government operations
+                //let sqCodesNATO = [74xx]; // Squawk codes for NATO flight operations
+                const sqCodesEMG = [7100,7500,7600,7700];  // Squawk codes for Emergencies
+                const sqCodesUFO = ["0000",7777];          // Squawk codes that are highly unusual and should not be assigned
+
+                var data = row.getData(); //get data object for row
+
+                // Highlight Flights From: "DPS" (airport IATA code)
+                if(data.origin == homePort && data.flight != "null"){
+                    row.getElement().css({"color":"#33D9FF", "font-weight":"bold"});    // bright-blue bold
+                }
+
+                // Highlight Flights To: "DPS" (aiport IATA code)
+                if(data.destination == homePort && data.flight != "null"){
+                    row.getElement().css({"color":"#0ff", "font-weight":"normal"});       // aqua normal
+                }
+
+                // Highlight Flights with Emergency squawks:
+                for (let i of sqCodesEMG) {
+                    if (data.squawk == i) {
+                        row.getElement().css({"color":"red", "font-weight":"bold"});    // red bold
+                        //console.log("Emergency Flight!", i);
+                    }
+                }
+
+                // Highlight Flights with UFO squawks:
+                for (let i of sqCodesUFO) {
+                    if (data.squawk == i) {
+                        row.getElement().css({"color":"#ffa500", "font-weight":"bold"});   // orange bold
+                        //console.log("Illegal Squawk!", i);
+                    }
+                }
+
+                // Highlight Flights with squawks on watchList:
+                for (let i of sqCodesList) {
+                    if (data.squawk == i) {
+                        row.getElement().css({"color":"#f0f", "font-weight":"bold"});   // fuchsia bold
+                        //console.log("Illegal Squawk!", i);
+                        this.sendNotification("SHOW_ALERT", {
+                            title: "FlightRadar",
+                            message: "A flight on your watch list has been detected!",
+                            timer: "5000"
+                        });
+                    }
+                }
+
+            },
+            // END
         });
 
         $(window).resize(function () {
