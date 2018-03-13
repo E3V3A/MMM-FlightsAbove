@@ -29,6 +29,7 @@ Module.register('MMM-FlightsAbove',{
 
     defaults: {
         header: "Flights Above",            // The module header text, if any. (Use: "" to remove.)
+//      footerLegend: true,                 // Enable the color-code legend to the table footer
         compassHeading: false,              // Type of heading indicator. ["true" gives "NE", instead of "45" (degrees)]
         maxItems: 8,                        // MAX Number of rows (flights) to display [default is 8]
         homeIata: "DPS",                    // Airport IATA code for highlighting flights To/From from a "home" airport
@@ -254,7 +255,18 @@ Module.register('MMM-FlightsAbove',{
                 }
 
             },
-            // END
+            // END (rowFormatter)
+
+            // Add the footer color legend
+            footerElement:$("<div class='tabulator-footer'>" +
+                                "<span style='color:#33D9FF;'>▉</span> = To  " +
+                                "<span style='color:#0ff;'>▉</span> = From  &nbsp;" +
+                                "<span style='color:#f00;'>▉</span> = Emergency  " +
+                                "<span style='color:#f0f;'>▉</span> = watchList  " +
+                                "<span style='color:#0f0;'>▉</span> = Mil / Gov  " +
+                                "<span style='color:#ffa500;'>▉</span> = UFO" +
+                             "</div>"),
+            //END
         });
 
         $(window).resize(function () {

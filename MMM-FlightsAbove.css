@@ -61,16 +61,27 @@
     border-right: none;         /* 1px solid #888; */
 }
 
-/* Color the table rows */ 
+/* Color the table rows */
 #flightsabove .tabulator-tableHolder .tabulator-table .tabulator-row {
-    color:#fff;
-    background-color: #333;     /* 666 */ 
-    border-right: none;         /* remove? */
+    color: #fff;
+    background-color: #000;     /* was 333 */
+    border-right: none;
 }
 
 /* Color even rows */
 #flightsabove .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
-    background-color: #222;     /* 444 */ 
+    /*background-color: #222;*/     /* change to 222 for even odd color scheme */
+}
+
+/* The Footer Legend */
+.tabulator .tabulator-footer {
+    padding: none;
+    border-top: 1px solid #999;
+    background-color: #000;
+    text-align: left;
+    color: #ddd;
+    font-weight: normal;
+    font-size: 11px;            /* "" */ 
 }
 
 /* Remove the sort arrows in table headers */
