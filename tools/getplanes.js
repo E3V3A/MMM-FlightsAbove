@@ -1,7 +1,8 @@
 #!/usr/bin/node
 
 'use strict'
-const radar = require('flightradar24-client/lib/radar')
+//const radar = require('flightradar24-client/lib/radar')
+const radar = require('../lib/radar')
 
 // A no planes place:
 //radar(83, 13, 82, 14)

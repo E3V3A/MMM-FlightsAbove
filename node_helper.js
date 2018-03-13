@@ -3,8 +3,8 @@
  * FileName:     node_helper.js
  * Author:       E:V:A
  * License:      MIT
- * Date:         2018-03-04
- * Version:      1.0.3
+ * Date:         2018-03-13
+ * Version:      1.0.4
  * Description:  A MagicMirror module to display planes in the sky above you
  * Format:       4-space TAB's (no TAB chars), mixed quotes
  *
@@ -39,7 +39,8 @@
 
 const NodeHelper = require("node_helper");
 const fs = require('fs');
-const radar = require('flightradar24-client/lib/radar'); // Returns an Array of JS objects, not JSON!
+//const radar = require('flightradar24-client/lib/radar'); // Returns an Array of JS objects, not JSON!
+const radar = require('./lib/radar'); // Returns an Array of JS objects, not JSON!
 
 module.exports = NodeHelper.create({
 
