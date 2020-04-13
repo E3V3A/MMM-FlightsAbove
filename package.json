@@ -24,7 +24,7 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "jquery-ui-dist": "^1.12.1",
     "jquery.tabulator": "^3.4.4"
   }
